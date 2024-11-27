@@ -1,26 +1,40 @@
 import axios from 'axios';
 import os from 'os';
 
+interface MemoryUsage {
+  freeMemory: number;
+  totalMemory: number;
+  usedMemory: number;
+  memoryUsagePercentage: number;
+}
+
 class HealthService {
-  getCpuUsage() {
-    const cpus = os.cpus();
-    const allCpuUsage = cpus.map((cpu) => {
-      const totalCapacity = Object.values(cpu.times).reduce(
+  getCpuUsage(): number[] {
+    const cpus: os.CpuInfo[] = os.cpus();
+    const allCpuUsage: number[] = cpus.map((cpu) => {
+      const totalCapacity: number = Object.values(cpu.times).reduce(
         (acc, curr) => acc + curr,
         0,
       );
-      const usage = cpu.times.user + cpu.times.sys;
+      const usage: number = cpu.times.user + cpu.times.sys;
       return (usage / totalCapacity) * 100;
     });
 
     return allCpuUsage;
   }
 
-  getMemoryUsage() {
-    const freeMemory = os.freemem();
-    const totalMemory = os.totalmem();
-    const usedMemory = totalMemory - freeMemory;
-    const memoryUsagePercentage = (usedMemory / totalMemory) * 100;
+  getCpuAverageUsage(): number {
+    const allCpuUsage: number[] = this.getCpuUsage();
+    const averageCpuUsage: number =
+      allCpuUsage.reduce((acc, curr) => acc + curr, 0) / allCpuUsage.length;
+    return averageCpuUsage;
+  }
+
+  getMemoryUsage(): MemoryUsage {
+    const freeMemory: number = os.freemem();
+    const totalMemory: number = os.totalmem();
+    const usedMemory: number = totalMemory - freeMemory;
+    const memoryUsagePercentage: number = (usedMemory / totalMemory) * 100;
 
     return {
       freeMemory,
@@ -40,9 +54,9 @@ class HealthService {
     }
   }
 
-  async getHealth(urls: string[] | null) {
-    const cpuUsage = this.getCpuUsage();
-    const memoryUsage = this.getMemoryUsage();
+  async getHealth(urls: string[] | null): Promise<object> {
+    const cpuUsage: number[] = this.getCpuUsage();
+    const memoryUsage: object = this.getMemoryUsage();
     const externals: { [key: string]: string } = {};
     if (urls != null) {
       for (const url of urls) {
@@ -51,8 +65,9 @@ class HealthService {
         externals[url] = externalHealth ? 'healthy' : 'unhealthy';
       }
     }
-    // TODO: add external dependencies health
 
     return { cpuUsage, memoryUsage, externalDependencies: externals };
   }
 }
+
+export default HealthService;
