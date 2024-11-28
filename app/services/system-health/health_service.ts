@@ -17,7 +17,7 @@ class HealthService {
         0,
       );
       const usage: number = cpu.times.user + cpu.times.sys;
-      return (usage / totalCapacity) * 100;
+      return Math.round((usage / totalCapacity) * 1000) / 10;
     });
 
     return allCpuUsage;
@@ -27,7 +27,7 @@ class HealthService {
     const allCpuUsage: number[] = this.getCpuUsage();
     const averageCpuUsage: number =
       allCpuUsage.reduce((acc, curr) => acc + curr, 0) / allCpuUsage.length;
-    return averageCpuUsage;
+    return Math.round(averageCpuUsage * 10) / 10;
   }
 
   getMemoryUsage(): MemoryUsage {
