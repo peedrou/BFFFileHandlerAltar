@@ -20,6 +20,8 @@ const authService = new AuthenticationService();
 
 const app = express();
 app.use(logRequestId);
+app.use(authService.basicAuthMiddleware);
+
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -53,6 +55,7 @@ app.get('/health', async (req: Request, res: Response) => {
 
 app.post(
   '/upload',
+  authService.basicAuthMiddleware,
   clientRateLimiter.limit(),
   dynamicRateLimiter.getRateLimiter(),
   uploadFileRateLimit.limit(),

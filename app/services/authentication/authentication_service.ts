@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import mysql from 'mysql2/promise';
 
 class AuthenticationService {
-  private pool: mysql.Pool;
+  pool: mysql.Pool;
 
   constructor() {
     this.pool = mysql.createPool({
@@ -16,6 +16,7 @@ class AuthenticationService {
       connectionLimit: 10,
       queueLimit: 0,
     });
+    this.basicAuthMiddleware = this.basicAuthMiddleware.bind(this);
   }
 
   public async basicAuthMiddleware(
@@ -26,7 +27,8 @@ class AuthenticationService {
     const user = basicAuth(req);
 
     if (!user) {
-      return res.status(401).json({ message: 'No credentials provided' });
+      res.status(401).json({ message: 'No credentials provided' });
+      return;
     }
 
     try {
@@ -36,18 +38,16 @@ class AuthenticationService {
       );
 
       if (rows.length === 0) {
-        return res
-          .status(401)
-          .json({ message: 'Invalid username or password' });
+        res.status(401).json({ message: 'Invalid username or password' });
+        return;
       }
 
       const storedPassword = rows[0].password;
       const passwordMatch = await bcrypt.compare(user.pass, storedPassword);
 
       if (!passwordMatch) {
-        return res
-          .status(401)
-          .json({ message: 'Invalid username or password' });
+        res.status(401).json({ message: 'Invalid username or password' });
+        return;
       }
 
       next();
