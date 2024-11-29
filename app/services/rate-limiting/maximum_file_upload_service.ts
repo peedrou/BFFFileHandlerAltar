@@ -13,6 +13,7 @@ class UploadFileRateLimit {
         res.status(429).json({
           message: 'Too many concurrent request, please wait and try again',
         });
+        return;
       }
 
       this.activeUploads++;
