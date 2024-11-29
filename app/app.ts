@@ -5,6 +5,7 @@ import UploadFileRateLimit from './services/rate-limiting/maximum_file_upload_se
 import ClientRateLimiter from './services/rate-limiting/maximum_user_upload_service';
 import FileUploadService from './services/file-handling/file_handler_service';
 import HealthService from './services/system-health/health_service';
+import { logRequestId } from './helpers/logger/logger_attach_unique_id_helper';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ const fileUploadService = new FileUploadService();
 const healthService = new HealthService();
 
 const app = express();
+app.use(logRequestId);
 const port = process.env.PORT || 3000;
 
 app.use(express.json());

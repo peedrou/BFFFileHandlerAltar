@@ -3,3 +3,4 @@ node_modules
 .env
 large_file.csv
 uploads/
+all_logs.log

@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import multer, { Multer, FileFilterCallback } from 'multer';
+import logger from '../../helpers/logger/logger_helper';
 import { Request as MulterRequest } from 'express';
 import { Request, Response } from 'express';
 
@@ -34,12 +35,25 @@ class FileUploadService {
   handleFileUpload(req: Request, res: Response) {
     this.upload.single('file')(req, res, (err: any) => {
       if (err) {
+        logger.error('File upload error', {
+          requestId: req.headers['x-request-id'],
+          error: err.message,
+        });
         return res.status(400).json({ error: err.message });
       }
 
       if (!req.file) {
+        logger.warn('No file uploaded', {
+          requestId: req.headers['x-request-id'],
+        });
         return res.status(400).json({ error: 'No file uploaded.' });
       }
+
+      logger.info('File uploaded successfully', {
+        requestId: req.headers['x-request-id'],
+        filePath: req.file.path,
+        fileSize: req.file.size,
+      });
 
       res.status(200).json({
         message: 'File Uploaded Successfully',
