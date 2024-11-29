@@ -36,14 +36,15 @@ class FileUploadService {
       if (err) {
         return res.status(400).json({ error: err.message });
       }
-    });
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded.' });
-    }
 
-    res.status(200).json({
-      message: 'File Uploaded Successfully',
-      filePath: req.file.path,
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded.' });
+      }
+
+      res.status(200).json({
+        message: 'File Uploaded Successfully',
+        filePath: req.file.path,
+      });
     });
   }
 }

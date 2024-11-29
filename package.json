@@ -8,7 +8,10 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "start": "node app/app.js",
+    "build": "tsc",
+    "dev": "ts-node app/app.ts"
   },
   "keywords": [],
   "author": "",
@@ -26,10 +29,12 @@
     "prettier": "^3.4.1",
     "ts-jest": "^29.2.5",
     "ts-mockito": "^2.6.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {
     "axios": "^1.7.8",
+    "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "express-rate-limit": "^7.4.1",
     "multer": "^1.4.5-lts.1",
