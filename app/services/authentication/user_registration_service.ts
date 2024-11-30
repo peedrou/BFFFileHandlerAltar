@@ -9,26 +9,23 @@ class UserService {
   }
 
   async createUser(username: string, plainTextPassword: string) {
-    if (!this.dbService.connection) {
-      throw Error('DB is not initiaized');
-    }
-
     try {
-      const [rows]: any = await this.dbService.connection.execute(
-        'SELECT password FROM Users WHERE username = ?',
-        [username],
+      const resultQuery = await this.dbService.client.query(
+        `SELECT password FROM Users WHERE username = '${username}'`,
       );
 
-      if (rows.length > 0) {
+      console.log('resultQuery.rows', resultQuery.rows);
+
+      if (resultQuery.rows.length > 0) {
         throw new Error('User already exists');
       }
 
       const hashedPassword = await bcrypt.hash(plainTextPassword, 10);
-      const [result] = await this.dbService.connection.execute(
-        'INSERT INTO Users (username, password) VALUES (?, ?)',
-        [username, hashedPassword],
+      const resultInsert = await this.dbService.client.query(
+        `INSERT INTO Users (username, password) VALUES ('${username}', '${hashedPassword}')`,
       );
-      return result;
+
+      return resultInsert.rows;
     } catch (error) {
       console.error('Error inserting user:', error);
       throw error;

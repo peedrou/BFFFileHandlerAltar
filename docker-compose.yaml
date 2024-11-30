@@ -1,19 +1,19 @@
 version: '3.8'
 
 services:
-  mysql_db:
-    image: mysql:8.0
+  postgres_db:
+    image: postgres
+    restart: always
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-      MYSQL_DATABASE: authentication_db
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=root
+      - POSTGRES_DB=database_test
     ports:
-      - '3306:3306'
+      - 5432:5432
     volumes:
+      - pgdata:/var/lib/postgresql/data
       - ./.scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - mysql_network
-    container_name: mysql_db
+    container_name: postgres_db
 
-networks:
-  mysql_network:
-    driver: bridge
+volumes:
+  pgdata:

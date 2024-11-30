@@ -1,21 +1,17 @@
-import mysql from 'mysql2/promise';
+import { Client } from 'pg';
 
 class CreateDBPoolService {
-  connection: mysql.Connection | null;
+  client: Client;
 
   constructor() {
-    this.connection = null;
-    this.init();
-  }
-
-  async init() {
-    if (!this.connection)
-      this.connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'authentication_db',
-      });
+    this.client = new Client({
+      user: 'root',
+      password: 'secret',
+      host: 'localhost',
+      port: 5432,
+      database: 'database_test',
+    });
+    this.client.connect();
   }
 }
 

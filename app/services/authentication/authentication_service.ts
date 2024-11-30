@@ -16,10 +16,6 @@ class AuthenticationService {
     res: Response,
     next: NextFunction,
   ) {
-    if (!this.dbService.connection) {
-      throw Error('DB is not initiaized');
-    }
-
     const user = basicAuth(req);
 
     if (!user) {
@@ -28,23 +24,17 @@ class AuthenticationService {
     }
 
     try {
-      console.log('A');
-      const [rows]: any = await this.dbService.connection.execute(
-        'SELECT password FROM Users WHERE username = ?',
-        [user.name],
+      const resultSelect: any = await this.dbService.client.query(
+        `SELECT password FROM Users WHERE username = '${user.name}'`,
       );
-      console.log('B');
 
-      if (rows.length === 0) {
+      if (resultSelect.rows.length === 0) {
         res.status(401).json({ message: 'Invalid username or password' });
         return;
       }
-      console.log('C');
 
-      const storedPassword = rows[0].password;
+      const storedPassword = resultSelect.rows[0].password;
       const passwordMatch = await bcrypt.compare(user.pass, storedPassword);
-
-      console.log('D');
 
       if (!passwordMatch) {
         res.status(401).json({ message: 'Invalid username or password' });
