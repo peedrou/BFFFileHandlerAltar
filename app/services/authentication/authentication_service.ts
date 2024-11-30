@@ -1,21 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import basicAuth from 'basic-auth';
 import bcrypt from 'bcrypt';
-import mysql from 'mysql2/promise';
+import CreateDBPoolService from '../database/database_pool_service';
 
 class AuthenticationService {
-  pool: mysql.Pool;
+  dbService: CreateDBPoolService;
 
-  constructor() {
-    this.pool = mysql.createPool({
-      host: 'localhost',
-      user: 'root',
-      password: '',
-      database: 'authentication_db',
-      waitForConnections: true,
-      connectionLimit: 10,
-      queueLimit: 0,
-    });
+  constructor(dbService: CreateDBPoolService) {
+    this.dbService = dbService;
     this.basicAuthMiddleware = this.basicAuthMiddleware.bind(this);
   }
 
@@ -24,6 +16,10 @@ class AuthenticationService {
     res: Response,
     next: NextFunction,
   ) {
+    if (!this.dbService.connection) {
+      throw Error('DB is not initiaized');
+    }
+
     const user = basicAuth(req);
 
     if (!user) {
@@ -32,18 +28,23 @@ class AuthenticationService {
     }
 
     try {
-      const [rows]: any = await this.pool.execute(
+      console.log('A');
+      const [rows]: any = await this.dbService.connection.execute(
         'SELECT password FROM Users WHERE username = ?',
         [user.name],
       );
+      console.log('B');
 
       if (rows.length === 0) {
         res.status(401).json({ message: 'Invalid username or password' });
         return;
       }
+      console.log('C');
 
       const storedPassword = rows[0].password;
       const passwordMatch = await bcrypt.compare(user.pass, storedPassword);
+
+      console.log('D');
 
       if (!passwordMatch) {
         res.status(401).json({ message: 'Invalid username or password' });

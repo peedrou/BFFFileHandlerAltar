@@ -7,11 +7,12 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest",
+    "test:unit": "jest --testPathPattern=tests/unit/",
+    "test:integration": "jest --testPathPattern=tests/integration/",
     "format": "prettier --write .",
-    "start": "node app/app.js",
+    "dev": "ts-node app/app.ts",
     "build": "tsc",
-    "dev": "ts-node app/app.ts"
+    "start": "node dist/app/app.js"
   },
   "keywords": [],
   "author": "",

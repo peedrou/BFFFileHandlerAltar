@@ -1,7 +1,7 @@
 import rateLimit from 'express-rate-limit';
 import { RequestHandler } from 'express';
 
-class ClientRateLimiter {
+class ClientRateLimiterService {
   rateLimiter: RequestHandler;
 
   constructor() {
@@ -18,4 +18,4 @@ class ClientRateLimiter {
   }
 }
 
-export default ClientRateLimiter;
+export default ClientRateLimiterService;

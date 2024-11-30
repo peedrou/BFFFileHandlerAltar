@@ -2,7 +2,7 @@ import rateLimit from 'express-rate-limit';
 import { RequestHandler } from 'express';
 import HealthService from '../system-health/health_service';
 
-class DynamicRateLimiter {
+class DynamicRateLimiterService {
   healthService: HealthService = new HealthService();
   currentMaxRequests: number = 10;
   highCpuThreshold: number = 80;
@@ -54,4 +54,4 @@ class DynamicRateLimiter {
   }
 }
 
-export default DynamicRateLimiter;
+export default DynamicRateLimiterService;

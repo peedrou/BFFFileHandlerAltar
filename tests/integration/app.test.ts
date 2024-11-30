@@ -1,7 +1,7 @@
 import request from 'supertest';
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { createUser } from '../../app/services/authentication/user_registration_service';
+import CreateUserService from '../../app/services/authentication/user_registration_service';
 import AuthenticationService from '../../app/services/authentication/authentication_service';
 import HealthService from '../../app/services/system-health/health_service';
 import FileUploadService from '../../app/services/file-handling/file_handler_service';
@@ -9,15 +9,18 @@ import { logRequestId } from '../../app/helpers/logger/logger_attach_unique_id_h
 import DynamicRateLimiter from '../../app/services/rate-limiting/dynamic_rate_limiter_service';
 import UploadFileRateLimit from '../../app/services/rate-limiting/maximum_file_upload_service';
 import ClientRateLimiter from '../../app/services/rate-limiting/maximum_user_upload_service';
+import CreateDBPoolService from '../../app/services/database/database_pool_service';
 
 dotenv.config();
 
+const dbPoolService = new CreateDBPoolService();
 const dynamicRateLimiter = new DynamicRateLimiter();
 const uploadFileRateLimit = new UploadFileRateLimit(5);
 const clientRateLimiter = new ClientRateLimiter();
 const fileUploadService = new FileUploadService();
 const healthService = new HealthService();
-const authService = new AuthenticationService();
+const createUserService = new CreateUserService(dbPoolService);
+const authService = new AuthenticationService(dbPoolService);
 
 const app: Express = express();
 app.use(logRequestId);
@@ -32,7 +35,7 @@ app.post('/register', async (req: any, res: any) => {
   }
 
   try {
-    await createUser(username, password);
+    await createUserService.createUser(username, password);
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error registering user' });
@@ -61,6 +64,17 @@ app.post(
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
+});
+
+beforeAll(async () => {
+  await dbPoolService.init();
+  await dbPoolService.connection?.execute(
+    'DELETE FROM users; ALTER TABLE users AUTO_INCREMENT = 1;',
+  );
+});
+
+afterAll(async () => {
+  await dbPoolService.connection?.end();
 });
 
 describe('Integration Tests', () => {
@@ -103,7 +117,7 @@ describe('Integration Tests', () => {
       .post('/upload')
       .auth('hellouser', 'hellopassword')
       .send({ file: 'filedata' })
-      .expect(200);
+      .expect(201);
 
     expect(response.body.message).toBe('File uploaded successfully');
   });

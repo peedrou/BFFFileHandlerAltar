@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 
-class UploadFileRateLimit {
+class UploadFileRateLimitService {
   activeUploads: number = 0;
   maxConcurrentUploads: number;
 
   constructor(maxConcurrentUploads: number = 5) {
     this.maxConcurrentUploads = maxConcurrentUploads;
   }
+
   limit(): RequestHandler {
     return (req: Request, res: Response, next: NextFunction) => {
       if (this.activeUploads >= this.maxConcurrentUploads) {
@@ -23,4 +24,4 @@ class UploadFileRateLimit {
   }
 }
 
-export default UploadFileRateLimit;
+export default UploadFileRateLimitService;
