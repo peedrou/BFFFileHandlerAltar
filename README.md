@@ -131,3 +131,50 @@ When I tried to test with another library the same post request, I received simi
 ### Circuit Breaker
 
 Altough the Circuit Breaker logic is in theory correct, I´m having issues reproducing cohesive tests, due to lack of time I cannot explore this further.
+
+## Pipelines
+
+I created a simple github actions pipeline to run the unit tests when the code is pulled to develop or main:
+
+```yaml
+name: Testing Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [23.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Build the application
+        run: |
+          npm run build
+
+      - name: Run unit tests
+        run: |
+          npm run test:unit
+```
