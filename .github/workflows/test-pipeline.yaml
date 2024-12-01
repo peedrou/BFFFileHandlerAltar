@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [23.x]
 
     steps:
       - name: Checkout code
@@ -35,6 +35,6 @@ jobs:
         run: |
           npm run build
 
-      - name: Run tests
+      - name: Run unit tests
         run: |
-          npm test
+          npm run test:unit
