@@ -35,6 +35,12 @@ docker compose up -d
 
 This will make sure our postgres database is up and running, the docker-compose already references an init.sql script that automatically creates the Users table to be used for authentication
 
+Rename the .env.template file to .env with your required external dependencies
+
+```.env
+DEPENDENCIES="['https://www.google.com', 'https://www.altar.io']"
+```
+
 ## Start the Project
 
 Once everything is setup, you can run the application for dev, it will automatically set port 3000 unless specified in a .env file:
@@ -101,3 +107,27 @@ SELECT * FROM Users;
 once inside you will see something like:
 
 ![alt text](./resources/image.png)
+
+## Considerations (what I was not able to do)
+
+Altough it is possible to test with success in postman the upload of a file (and its subsequent rate limiter logic), I could not replicate this in the integration tests, there are several reasons why this could happen but my idea is that the supertests package is not made to handle the attachment of large files in in multipart/form-data, as tests like:
+
+```typescript
+it('should upload file with correct authentication', async () => {
+  const response = await request(app)
+    .post('/upload')
+    .auth('hellouser', 'hellopassword')
+    .attach('file', filePath)
+    .expect(200);
+
+  expect(response.body.message).toBe('File uploaded successfully');
+});
+```
+
+This test will always throw a timeout, even when we pass the file´s Stream or Buffer, when I tried to replicate this with a similar configuration, but just to send a very large string, it was successful until the string size was too big, the file stream is as big as this string, so I would most likely have to increase the timeout of the test substantially, which is not ideal.
+
+When I tried to test with another library the same post request, I received similar results. It would be interesting to see how this could be resolved, but due to lack of time I will not be able to see through it.
+
+### Circuit Breaker
+
+Altough the Circuit Breaker logic is in theory correct, I´m having issues reproducing cohesive tests, due to lack of time I cannot explore this further.

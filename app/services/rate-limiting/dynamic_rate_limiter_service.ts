@@ -3,18 +3,20 @@ import { RequestHandler } from 'express';
 import HealthService from '../system-health/health_service';
 
 class DynamicRateLimiterService {
-  healthService: HealthService = new HealthService();
+  healthService: HealthService;
   currentMaxRequests: number = 10;
   highCpuThreshold: number = 80;
   highMemoryThreshold: number = 80;
   adjustInterval: number = 5000;
 
   constructor(
+    healthService: HealthService,
     initialMaxRequests = 10,
     highCpuThreshold = 80,
     highMemoryThreshold = 80,
     adjustInterval = 5000,
   ) {
+    this.healthService = healthService;
     this.currentMaxRequests = initialMaxRequests;
     this.highCpuThreshold = highCpuThreshold;
     this.highMemoryThreshold = highMemoryThreshold;

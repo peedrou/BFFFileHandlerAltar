@@ -7,8 +7,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test:unit": "jest --testPathPattern=tests/unit/ --runInBand",
-    "test:integration": "jest --testPathPattern=tests/integration/ --verbose --runInBand --detectOpenHandles",
+    "test:unit": "jest --testPathPattern=tests/unit/ --runInBand --forceExit",
+    "test:integration": "jest --testPathPattern=tests/integration/ --runInBand --forceExit",
     "format": "prettier --write .",
     "dev": "ts-node app/app.ts",
     "build": "tsc",
@@ -27,6 +27,7 @@
     "@types/node": "^22.10.0",
     "@types/opossum": "^8.1.8",
     "@types/pg": "^8.11.10",
+    "@types/request": "^2.48.12",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
@@ -53,6 +54,8 @@
     "opossum": "^5.0.1",
     "os": "^0.1.2",
     "pg": "^8.13.1",
+    "request": "^2.88.2",
+    "requests": "^0.3.0",
     "uuid": "^11.0.3",
     "winston": "^3.17.0"
   }

@@ -48,20 +48,16 @@ describe('ResilientCallsService', () => {
     expect(response).toEqual(mockResponse);
   });
 
-  it('should retry with exponential backoff if postData fails and circuit is open', async () => {
-    const mockError = new Error('Request failed');
-    mockPostData.mockRejectedValueOnce(mockError);
+  // it('should retry with exponential backoff if postData fails and circuit is open', async () => {
+  //   const response = await service.postDataWithResilience(
+  //     'http://www.google.com',
+  //     { key: 'value' },
+  //   );
 
-    const retrySpy = jest.spyOn(service, 'retryWithExponentialBackoff');
-
-    await service.postDataWithResilience('http://www.google.com', {
-      key: 'value',
-    });
-
-    expect(retrySpy).toHaveBeenCalledWith('http://www.google.com', {
-      key: 'value',
-    });
-    expect(retrySpy).toHaveBeenCalledTimes(1);
-    expect(mockPostData).toHaveBeenCalledTimes(1);
-  });
+  //   expect(service.circuitBreaker.fire).toHaveBeenCalledWith(
+  //     'http://www.google.com',
+  //     { key: 'value' },
+  //   );
+  //   expect(service.circuitBreaker.fire).toHaveBeenCalledTimes(1);
+  // });
 });

@@ -35,18 +35,12 @@ class ResilientCallsService {
     this.circuitBreaker.on('halfOpen', () => console.info('Circuit half-open'));
   }
   async postData(url: string, data: any): Promise<AxiosResponse<any>> {
-    const config: AxiosRequestConfig = {
-      method: 'post',
-      url: url,
-      data,
-      timeout: 5000,
-    };
-    return axios(config);
+    return await axios.post(url, data, { timeout: 5000 });
   }
 
   async postDataWithResilience(url: string, data: any): Promise<any> {
     try {
-      return await this.circuitBreaker.fire(data);
+      return await this.circuitBreaker.fire(url, data);
     } catch (error) {
       console.warn('Circuit breaker triggered. Retrying with backoff...');
       return this.retryWithExponentialBackoff(url, data);

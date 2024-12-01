@@ -2,7 +2,7 @@ import { createLogger, format, transports } from 'winston';
 import * as path from 'path';
 import * as fs from 'fs';
 
-const logFolderPath = path.join(__dirname, '..', 'logs');
+const logFolderPath = path.join(__dirname, '..', '..', 'logs');
 if (!fs.existsSync(logFolderPath)) {
   fs.mkdirSync(logFolderPath);
 }
