@@ -12,18 +12,20 @@ import { logRequestId } from './helpers/logger/logger_attach_unique_id_helper';
 import AuthenticationController from './controllers/authentication_controller';
 import HealthController from './controllers/health_controller';
 import UploadController from './controllers/upload_controller';
+import { parseEnvArray } from './helpers/misc/parse_array';
 
 dotenv.config();
+const dependencies = parseEnvArray(process.env.DEPENDENCIES);
 
 // Services
 const dbPoolService = new CreateDBPoolService();
-const dynamicRateLimiter = new DynamicRateLimiterService();
 const uploadFileRateLimit = new UploadFileRateLimitService(5);
 const clientRateLimiter = new ClientRateLimiterService();
 const fileUploadService = new FileUploadService();
 const healthService = new HealthService();
 const userService = new CreateUserService(dbPoolService);
 const authService = new AuthenticationService(dbPoolService);
+const dynamicRateLimiter = new DynamicRateLimiterService(healthService);
 
 // App
 
@@ -33,7 +35,7 @@ app.use(express.json());
 
 // Controllers
 new AuthenticationController(app, userService);
-new HealthController(app, healthService, ['https://www.google.com']);
+new HealthController(app, healthService, dependencies);
 new UploadController(
   app,
   authService,
@@ -43,7 +45,7 @@ new UploadController(
   fileUploadService,
 );
 
-const port = process.env.PORT || 3000;
+const port = 3000;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });

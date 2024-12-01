@@ -14,8 +14,6 @@ class UserService {
         `SELECT password FROM Users WHERE username = '${username}'`,
       );
 
-      console.log('resultQuery.rows', resultQuery.rows);
-
       if (resultQuery.rows.length > 0) {
         throw new Error('User already exists');
       }
