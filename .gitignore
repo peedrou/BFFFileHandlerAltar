@@ -1,0 +1,7 @@
+node_modules
+.vscode/
+.env
+large_file.csv
+uploads/
+all_logs.log
+dist

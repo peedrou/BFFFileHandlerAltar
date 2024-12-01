@@ -1,0 +1,62 @@
+{
+  "name": "bfffilehandleraltar",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test:unit": "jest --testPathPattern=tests/unit/ --runInBand --forceExit",
+    "test:integration": "jest --testPathPattern=tests/integration/ --runInBand --forceExit",
+    "format": "prettier --write .",
+    "dev": "ts-node app/app.ts",
+    "build": "tsc",
+    "start": "node dist/app/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/basic-auth": "^1.1.8",
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.0",
+    "@types/jest": "^29.5.14",
+    "@types/multer": "^1.4.12",
+    "@types/mysql": "^2.15.26",
+    "@types/node": "^22.10.0",
+    "@types/opossum": "^8.1.8",
+    "@types/pg": "^8.11.10",
+    "@types/request": "^2.48.12",
+    "@types/supertest": "^6.0.2",
+    "eslint": "^9.15.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "jest": "^29.7.0",
+    "prettier": "^3.4.1",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-mockito": "^2.6.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "axios": "^1.7.8",
+    "basic-auth": "^2.0.1",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "express-rate-limit": "^7.4.1",
+    "form-data": "^4.0.1",
+    "multer": "^1.4.5-lts.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.11.5",
+    "opossum": "^5.0.1",
+    "os": "^0.1.2",
+    "pg": "^8.13.1",
+    "request": "^2.88.2",
+    "requests": "^0.3.0",
+    "uuid": "^11.0.3",
+    "winston": "^3.17.0"
+  }
+}
