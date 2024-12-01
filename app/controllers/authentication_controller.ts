@@ -6,7 +6,7 @@ class AuthenticationController {
     app.post('/register', async (req: Request, res: Response) => {
       const { username, password } = req.body;
 
-      if (!username || !password) {
+      if (!username || !password || typeof username !== 'string') {
         res.status(400).json({ message: 'Username and password are required' });
       }
 
@@ -14,9 +14,12 @@ class AuthenticationController {
         await userService.createUser(username, password);
         res.status(201).json({ message: 'User registered successfully' });
       } catch (error) {
-        res.status(500).json({
-          message: 'Error registering user, user might already exist',
-        });
+        if (!res.headersSent) {
+          console.log(error);
+          res.status(500).json({
+            message: 'Error registering user, user might already exist',
+          });
+        }
       }
     });
   }
